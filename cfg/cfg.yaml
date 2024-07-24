@@ -1,0 +1,12 @@
+# parameters 
+gravity_acceleration: 9.8 # m/s^2
+
+# setting of parabolic dataset
+num_samples: 1000  
+num_points:  100  
+
+# The range of initial velocity and angle
+initial_velocity_min: 10.0  # m/s
+initial_velocity_max: 30.0  # m/s
+angle_min: 30.0  # degrees
+angle_max: 60.0  # degrees
