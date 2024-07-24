@@ -4,3 +4,11 @@
 # .vscode
 .vscode
 
+# poetry
+.python-version
+
+# parabolic curve data
+/data/simulation/*.csv
+/data/processed/*.csv
+/data/splits/*.csv
+
