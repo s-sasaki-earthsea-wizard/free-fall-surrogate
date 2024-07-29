@@ -1,22 +1,16 @@
 import numpy as np
 import pandas as pd
 import os
-import yaml
+import sys
+
+# Add the path to the utils directory to the system path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'utils'))
+
+from utils import load_config # import the load_config function from utils/utils.py
 
 class ParabolicMotionDataGenerator:
     def __init__(self, config_path):
-        self.config_path = config_path
-        self.load_config()
-
-        # Create a directory to store the parabolic data
-        self.data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),
-                                     'data', 'simulation')
-        os.makedirs(self.data_dir, exist_ok=True)
-
-    def load_config(self):
-        # Load the configuration file
-        with open(self.config_path, 'r') as file:
-            cfg = yaml.safe_load(file)
+        cfg = load_config(config_path)
 
         # fetch the parameters from the configuration file
         self.gravity_acceleration = cfg['gravity_acceleration']
@@ -25,6 +19,11 @@ class ParabolicMotionDataGenerator:
         self.initial_velocity_range = (cfg['initial_velocity_min'],
                                        cfg['initial_velocity_max'])
         self.angle_range = (cfg['angle_min'], cfg['angle_max'])
+
+        # Create a directory to store the parabolic data
+        self.data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                                     'data', 'simulation')
+        os.makedirs(self.data_dir, exist_ok=True)
 
     def generate_parabolic_data(self):
         all_data = []
