@@ -9,6 +9,7 @@
 
 # parabolic curve data
 /data/simulation/*.csv
+/data/simulation/split/*.csv
 /data/processed/*.csv
-/data/splits/*.csv
+/data/simulation/*.csv
 

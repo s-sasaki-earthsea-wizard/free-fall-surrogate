@@ -10,3 +10,11 @@ initial_velocity_min: 10.0  # m/s
 initial_velocity_max: 30.0  # m/s
 angle_min: 30.0  # degrees
 angle_max: 60.0  # degrees
+
+# Training, validation, and test dataset ratio
+train_ratio: 0.7
+val_ratio: 0.2
+test_ratio: 0.1
+
+# Random state for splitting the dataset
+random_state: 42
