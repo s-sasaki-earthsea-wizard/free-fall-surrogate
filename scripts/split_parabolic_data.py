@@ -2,65 +2,89 @@ import sys
 import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
-import math
+from math import isclose
 
 # Add the path to the utils directory to the system path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'utils'))
 from utils import load_config
 
-# Split the parabolic motion data# Random seed for reproducibility
+# Split the parabolic motion data
 class DataSplitter:
     def __init__(self, motion_file, params_file, config_path):
+        # Load configuration
         self.config = load_config(config_path)
-        self.data = self.load_data(motion_file, params_file)
+        
+        # Load data
+        self.motion_data = pd.read_csv(motion_file)
+        self.params_data = pd.read_csv(params_file)
+        
+        # Extract settings
         self.random_state = self.config['random_state']
         self.train_data = None
         self.val_data = None
         self.test_data = None
+        self.train_params = None
+        self.val_params = None
+        self.test_params = None
 
-    def load_data(self, motion_file, params_file):
-        motion_data = pd.read_csv(motion_file)
-        params_data = pd.read_csv(params_file)
-        data = pd.merge(motion_data, params_data, on='path_id')
-        return data
-    
     def split_data(self):
         train_ratio = self.config['train_ratio']
         val_ratio = self.config['val_ratio']
         test_ratio = self.config['test_ratio']
 
-        print("total ratio: ", train_ratio + val_ratio + test_ratio)
+        # Log the data split ratios
+        print(f"train_ratio: {train_ratio}, val_ratio: {val_ratio}, test_ratio: {test_ratio}")
+        print(f"Sum: {train_ratio + val_ratio + test_ratio}")
 
-        # The assert statement is used to check if the sum of the ratios is equal to 1
-        assert math.isclose(train_ratio + val_ratio + test_ratio, 1.0), "The sum of train, validation, and test ratios must be 1."
+        # Ensure the sum of the ratios is equal to 1
+        assert isclose(train_ratio + val_ratio + test_ratio, 1.0), "The sum of train, validation, and test ratios must be 1."
 
-        # Split the data into the training data and the remaining data
-        train_data, remaining_data = train_test_split(self.data, test_size=(1 - train_ratio), random_state=self.random_state)
+        # Group the data by path_id
+        grouped = self.motion_data.groupby('path_id')
 
-        # Split the remaining data into validation and test data
-        val_data, test_data = train_test_split(remaining_data, test_size=(test_ratio / (val_ratio + test_ratio)), random_state=self.random_state)
+        # Create a list of unique path ids
+        path_ids = list(grouped.groups.keys())
 
-        self.train_data = train_data
-        self.val_data = val_data
-        self.test_data = test_data
-    
+        # Split the path ids into train, validation, and test sets
+        val_test_ratio = test_ratio / (val_ratio + test_ratio)
+        train_ids, remaining_ids = train_test_split(path_ids, test_size=(1 - train_ratio), random_state=self.random_state)
+        val_ids, test_ids = train_test_split(remaining_ids, test_size=val_test_ratio, random_state=self.random_state)
+
+        # Split the data based on the split path ids
+        self.train_data = self.motion_data[self.motion_data['path_id'].isin(train_ids)]
+        self.val_data = self.motion_data[self.motion_data['path_id'].isin(val_ids)]
+        self.test_data = self.motion_data[self.motion_data['path_id'].isin(test_ids)]
+
+        # Split the parameters data same as the motion data
+        self.train_params = self.params_data[self.params_data['path_id'].isin(train_ids)]
+        self.val_params = self.params_data[self.params_data['path_id'].isin(val_ids)]
+        self.test_params = self.params_data[self.params_data['path_id'].isin(test_ids)]
+
     def save_data(self, output_dir):
         os.makedirs(output_dir, exist_ok=True)
-        train_file = os.path.join(output_dir, 'train_data.csv')
-        val_file = os.path.join(output_dir, 'val_data.csv')
-        test_file = os.path.join(output_dir, 'test_data.csv')
-        self.train_data.sort_values(by='path_id').to_csv(train_file, index=False)
-        self.val_data.sort_values(by='path_id').to_csv(val_file, index=False)
-        self.test_data.sort_values(by='path_id').to_csv(test_file, index=False)
-        print(f'Train data saved to {train_file}')
-        print(f'Validation data saved to {val_file}')
-        print(f'Test data saved to {test_file}')
-
-        os.makedirs(output_dir, exist_ok=True)
-        train_file = os.path.join(output_dir, 'train_data.csv')
-        val_file = os.path.join(output_dir, 'val_data.csv')
-        test_file = os.path.join(output_dir, 'test_data.csv')
         
+        # Define file paths
+        train_motion_file = os.path.join(output_dir, 'train_motion_data.csv')
+        val_motion_file = os.path.join(output_dir, 'val_motion_data.csv')
+        test_motion_file = os.path.join(output_dir, 'test_motion_data.csv')
+        train_params_file = os.path.join(output_dir, 'train_params_data.csv')
+        val_params_file = os.path.join(output_dir, 'val_params_data.csv')
+        test_params_file = os.path.join(output_dir, 'test_params_data.csv')
+
+        # Save data to CSV files
+        self.train_data.sort_values(by='path_id').to_csv(train_motion_file, index=False)
+        self.val_data.sort_values(by='path_id').to_csv(val_motion_file, index=False)
+        self.test_data.sort_values(by='path_id').to_csv(test_motion_file, index=False)
+        self.train_params.sort_values(by='path_id').to_csv(train_params_file, index=False)
+        self.val_params.sort_values(by='path_id').to_csv(val_params_file, index=False)
+        self.test_params.sort_values(by='path_id').to_csv(test_params_file, index=False)
+
+        print(f'Train motion data saved to {train_motion_file}')
+        print(f'Validation motion data saved to {val_motion_file}')
+        print(f'Test motion data saved to {test_motion_file}')
+        print(f'Train params data saved to {train_params_file}')
+        print(f'Validation params data saved to {val_params_file}')
+        print(f'Test params data saved to {test_params_file}')
 
 def main():
     data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'simulation')
@@ -76,4 +100,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
