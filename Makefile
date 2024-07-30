@@ -1,6 +1,8 @@
 # generate parabola curve data
 parabola:
 	@python scripts/prepare_data.py
+split:
+	@python scripts/split_parabolic_data.py
 
 # Install poetry
 install_poetry:

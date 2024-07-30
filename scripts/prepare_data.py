@@ -1,22 +1,16 @@
 import numpy as np
 import pandas as pd
 import os
-import yaml
+import sys
+
+# Add the path to the utils directory to the system path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'utils'))
+
+from utils import load_config # import the load_config function from utils/utils.py
 
 class ParabolicMotionDataGenerator:
     def __init__(self, config_path):
-        self.config_path = config_path
-        self.load_config()
-
-        # Create a directory to store the parabolic data
-        self.data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),
-                                     'data', 'simulation')
-        os.makedirs(self.data_dir, exist_ok=True)
-
-    def load_config(self):
-        # Load the configuration file
-        with open(self.config_path, 'r') as file:
-            cfg = yaml.safe_load(file)
+        cfg = load_config(config_path)
 
         # fetch the parameters from the configuration file
         self.gravity_acceleration = cfg['gravity_acceleration']
@@ -26,11 +20,16 @@ class ParabolicMotionDataGenerator:
                                        cfg['initial_velocity_max'])
         self.angle_range = (cfg['angle_min'], cfg['angle_max'])
 
+        # Create a directory to store the parabolic data
+        self.data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                                     'data', 'simulation')
+        os.makedirs(self.data_dir, exist_ok=True)
+
     def generate_parabolic_data(self):
         all_data = []
         all_params = []
 
-        for sample_id in range(self.num_samples):
+        for path_id in range(self.num_samples):
             initial_velocity = np.random.uniform(*self.initial_velocity_range)
             angle_deg = np.random.uniform(*self.angle_range)
             angle_rad = np.radians(angle_deg)
@@ -42,12 +41,12 @@ class ParabolicMotionDataGenerator:
             y = initial_velocity * np.sin(angle_rad) * time - 0.5 * self.gravity_acceleration * time**2
 
             # Store the path data in a dictionary
-            data_temp = pd.DataFrame({'sample_id': sample_id, 'time': time, 'x': x, 'y': y})
+            data_temp = pd.DataFrame({'path_id': path_id, 'time': time, 'x': x, 'y': y})
             all_data.append(data_temp)
 
             # Store the initial boundary conditions in a dictionary
             params_temp = pd.DataFrame({
-                'sample_id': [sample_id],
+                'path_id': [path_id],
                 'initial_velocity': [initial_velocity],
                 'angle (deg)': [angle_deg]
             })
