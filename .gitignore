@@ -9,7 +9,9 @@
 
 # parabolic curve data
 /data/simulation/*.csv
-/data/simulation/split/*.csv
 /data/processed/*.csv
 /data/simulation/*.csv
-/data/simulation/split/*.csv
+/data/simulation/splits/*.csv
+
+# pycache
+__pycache__/
