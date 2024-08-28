@@ -47,16 +47,29 @@ RUN curl -sSL https://install.python-poetry.org | python3.8 -
 # Set environment variables for Poetry
 ENV PATH="/root/.local/bin:$PATH"
 
+# Set the locale environment variables
+ENV PROJECT_NAME=free-fall-surrogate
+
 # Make the workspace directory to mount the host directory, and set it as the working directory
-RUN mkdir -p /workspace/projects
-WORKDIR /workspace/projects/free-fall-surrogate
+RUN mkdir -p /workspace/projects/${PROJECT_NAME}
+WORKDIR /workspace/projects/${PROJECT_NAME}
+
+# Allow the Git directory to be recognized as safe
+RUN git config --global --add safe.directory /workspace/projects/free-fall-surrogate
+
 
 # Install Python via pyenv
-RUN pyenv install 3.8.10 && \
-    pyenv global 3.8.10
+RUN pyenv install 3.10.10 && \
+    pyenv global 3.10.10
 
 # Install dependencies by Poetry
+# Copy the configuration files
 COPY pyproject.toml poetry.lock ./
+
+# Set the correct Python version for Poetry environment
+RUN poetry env use python3.10
+
+# Install the dependencies
 RUN poetry install
 
 # Default command when the container starts

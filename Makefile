@@ -1,15 +1,15 @@
 # generate parabola curve data
 parabola:
-	@python scripts/prepare_data.py
+	poetry run python3.10 scripts/prepare_data.py
 split:
-	@python scripts/split_parabolic_data.py
+	poetry run python3.10 scripts/split_parabolic_data.py
 
 # Run pytest
 test:
 	poetry run pytest tests
 
 # Docker
-# 
+# Set a default valuables for docker 
 IMAGE_NAME = free-fall-surrogate
 HOST_PROJECTS_DIR := $(shell pwd)
 CONTAINER_PROJECTS_DIR := /workspace/projects/free-fall-surrogate
