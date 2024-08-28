@@ -21,3 +21,5 @@ docker-build:
 # Run docker container
 docker-run:
 	docker run --rm -it -v $(HOST_PROJECTS_DIR):$(CONTAINER_PROJECTS_DIR) $(IMAGE_NAME)
+
+# test
