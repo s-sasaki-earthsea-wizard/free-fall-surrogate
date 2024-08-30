@@ -7,8 +7,9 @@
 - 初速度と発射角度という2つのパラメータから自由落下の軌道を計算し、その精度や応用可能性を評価します。
 
 ## 開発環境
-- OS: Ubuntu-20.04 (Docker container)
-- Python: 3.10.10
+- ホストOS: Ubuntu 18.04 (Jetson Nano)
+- コンテナOS: NVIDIA提供のベースイメージ (nvcr.io/nvidia/l4t-pytorch:r35.2.1-pth2.0-py3)
+- Python: 3.8.10
 
 ## インストール方法
 Dockerをインストールした後、以下のコマンドで`./Dockerfile`を参照してイメージのビルドを行います。
@@ -75,8 +76,9 @@ This project aims to replicate free fall motion using a surrogate model.
 - The model calculates the trajectory of free fall based on two parameters: initial velocity and launch angle. The accuracy and applicability of the model are then evaluated.
 
 ## Development Environment
-- OS: Ubuntu-20.04 (Docker container)
-- Python: 3.10.10
+- Host OS: Ubuntu 18.04 (Jetson Nano)
+- Container OS: NVIDIA-provided base image (nvcr.io/nvidia/l4t-pytorch:r35.2.1-pth2.0-py3)
+- Python: 3.8.10
 
 ## Installation
 After installing Docker, you can build the image by running the following command, which references `./Dockerfile`:

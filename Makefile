@@ -1,14 +1,14 @@
 # generate parabola curve data
 generate_parabolic_data:
-	poetry run python src/generate_parabolic_motion_data.py
+	python src/generate_parabolic_motion_data.py
 
 # split parabolic data
 split:
-	poetry run python src/split_parabolic_motion_data.py
+	python src/split_parabolic_motion_data.py
 
 # Tarin parabolic motion
 train:
-	poetry run python src/train_parabolic_motion.py
+	python src/train_parabolic_motion.py
 
 # -------------------
 # Docker
@@ -30,6 +30,6 @@ docker-run:
 # Unit tests
 # -------------------
 test_parabolic_motion_generation:
-	PYTHONPATH=./src poetry run pytest -s ./tests/test_parabolic_motion_generation.py
+	PYTHONPATH=./src pytest -s ./tests/test_parabolic_motion_generation.py
 test_parabolic_motion_split:
-	PYTHONPATH=./src poetry run pytest -s ./tests/test_parabolic_motion_valid_split.py
+	PYTHONPATH=./src pytest -s ./tests/test_parabolic_motion_valid_split.py
