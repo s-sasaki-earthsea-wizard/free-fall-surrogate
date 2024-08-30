@@ -1,5 +1,5 @@
 # parameters 
-gravity_acceleration: 9.8 # m/s^2
+gravity_acceleration: 9.81 # m/s^2
 
 # setting of parabolic dataset
 num_samples: 1000  

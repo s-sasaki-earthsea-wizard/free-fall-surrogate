@@ -2,11 +2,7 @@ import numpy as np
 import pandas as pd
 import os
 import sys
-
-# Add the path to the utils directory to the system path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'utils'))
-
-from utils import load_config # import the load_config function from utils/utils.py
+from utils.config_utils import load_config # import the load_config function from utils/utils.py
 
 class ParabolicMotionDataGenerator:
     def __init__(self, config_path):

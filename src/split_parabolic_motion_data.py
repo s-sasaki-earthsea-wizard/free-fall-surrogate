@@ -3,10 +3,7 @@ import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from math import isclose
-
-# Add the path to the utils directory to the system path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'utils'))
-from utils import load_config
+from utils.config_utils import load_config
 
 # Split the parabolic motion data
 class DataSplitter:
@@ -71,10 +68,10 @@ class DataSplitter:
         val_params_file = os.path.join(output_dir, 'val_params_data.csv')
         test_params_file = os.path.join(output_dir, 'test_params_data.csv')
 
-        # Save data to CSV files
-        self.train_data.sort_values(by='path_id').to_csv(train_motion_file, index=False)
-        self.val_data.sort_values(by='path_id').to_csv(val_motion_file, index=False)
-        self.test_data.sort_values(by='path_id').to_csv(test_motion_file, index=False)
+        # Save data to CSV files, sorted by 'path_id' and 'time'
+        self.train_data.sort_values(by=['path_id', 'time']).to_csv(train_motion_file, index=False)
+        self.val_data.sort_values(by=['path_id', 'time']).to_csv(val_motion_file, index=False)
+        self.test_data.sort_values(by=['path_id', 'time']).to_csv(test_motion_file, index=False)
         self.train_params.sort_values(by='path_id').to_csv(train_params_file, index=False)
         self.val_params.sort_values(by='path_id').to_csv(val_params_file, index=False)
         self.test_params.sort_values(by='path_id').to_csv(test_params_file, index=False)
