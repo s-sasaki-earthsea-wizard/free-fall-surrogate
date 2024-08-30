@@ -1,8 +1,8 @@
 # generate parabola curve data
 parabola:
-	poetry run python3.10 scripts/prepare_data.py
+	poetry run python src/prepare_data.py
 split:
-	poetry run python3.10 scripts/split_parabolic_data.py
+	poetry run python src/split_parabolic_data.py
 
 # Run pytest
 test:
@@ -22,4 +22,6 @@ docker-build:
 docker-run:
 	docker run --rm -it -v $(HOST_PROJECTS_DIR):$(CONTAINER_PROJECTS_DIR) $(IMAGE_NAME)
 
-# test
+# unit tests
+test_parabolic_motion:
+	PYTHONPATH=src pytest tests/test_parabolic_motion.py
