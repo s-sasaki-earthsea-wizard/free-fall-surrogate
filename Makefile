@@ -6,6 +6,10 @@ generate_parabolic_data:
 split:
 	poetry run python src/split_parabolic_motion_data.py
 
+# Tarin parabolic motion
+train:
+	poetry run python src/train_parabolic_motion.py
+
 # -------------------
 # Docker
 # -------------------

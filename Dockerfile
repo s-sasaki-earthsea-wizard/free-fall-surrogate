@@ -1,5 +1,5 @@
-# Set the base image
-FROM ubuntu:20.04
+# Set the base image as the PyTorch image for Jetson Nano
+FROM nvcr.io/nvidia/l4t-pytorch:r32.7.1-pth1.10-py3
 
 # Set the project name as locale environment variables
 ENV PROJECT_NAME=free-fall-surrogate
