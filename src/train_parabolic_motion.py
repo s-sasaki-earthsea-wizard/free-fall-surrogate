@@ -1,31 +1,37 @@
 import pandas as pd
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
+
 from utils.parabolic_motion_utils import load_training_data
+from utils.data_utils import batch_shuffle
+from utils.validation_utils import verify_motion_against_params
 
-def custom_collate_fn(batch):
-    motion_batch = [item[0] for item in batch]
-    params_batch = []
-    
-    # Stack the motion tensors to keep the time sequence intact
-    motion_batch = torch.stack(motion_batch, dim=0)
-    
-    # Manually repeat params to match the shape of motion
-    for motion, params in zip(motion_batch, [item[1] for item in batch]):
-        # Repeat params tensor to match the number of time steps in the corresponding motion tensor
-        expanded_params = params.unsqueeze(0).expand(motion.size(0), -1)
-        params_batch.append(expanded_params)
+"""def verify_motion_against_params(motion, params, gravity=9.81, tolerance=1e-3):
+    # Extract time, x, and y from motion tensor
+    time = motion[:, 0].numpy()
+    x_actual = motion[:, 1].numpy()
+    y_actual = motion[:, 2].numpy()
 
-    # Stack the manually created params_batch
-    params_batch = torch.cat(params_batch, dim=0)  # Use cat instead of stack to avoid creating an additional dimension
-    
-    # Flatten the batch dimension to merge all the batches into one
-    motion_batch = motion_batch.view(-1, motion_batch.size(-1))
-    params_batch = params_batch.view(-1, params.size(-1))  # Use params.size(-1) to maintain the correct shape
-    
-    return motion_batch, params_batch
+    # Extract initial velocity and angle from params
+    initial_velocity = params[0].item()
+    angle_deg = params[1].item()
+    angle_rad = np.radians(angle_deg)
+
+    # Calculate theoretical motion
+    x_theoretical = initial_velocity * np.cos(angle_rad) * time
+    y_theoretical = initial_velocity * np.sin(angle_rad) * time - 0.5 * gravity * time**2
+
+    # Compare actual and theoretical motion
+    x_diff = np.abs(x_actual - x_theoretical)
+    y_diff = np.abs(y_actual - y_theoretical)
+
+    assert np.all(x_diff < tolerance), f"x values differ by more than {tolerance}: max diff = {x_diff.max()}"
+    assert np.all(y_diff < tolerance), f"y values differ by more than {tolerance}: max diff = {y_diff.max()}"
+
+    return True"""
 
 # Define a simple neural network model
 class ParabolicMotionModel(nn.Module):
@@ -64,18 +70,13 @@ def main():
 
     # Set the batch size to the number of unique path_ids
     batch_size = len(motion_concat) // len(motion_tensors)  # This should equal the number of time steps per path_id
-    print(f"Batch size: {batch_size}")
-
+          
     # Create a DataLoader for training
-    data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, collate_fn=custom_collate_fn)
+    data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 
-    # Debug: Verify the DataLoader by iterating through one batch
-    for i, (motion, params) in enumerate(data_loader):
-        print(f"Batch {i}:")
-        print(f"  Motion Tensor shape: {motion.shape}")
-        print(f"  Params Tensor shape: {params.shape}")
-        print(f"  Motion Tensor: {motion}")
-        print(f"  Params Tensor: {params}")
+    # Shuffle the batches manually using the custom function
+    shuffled_indices = batch_shuffle(dataset, batch_size)
+    shuffled_loader = DataLoader(dataset, batch_size=batch_size, sampler=shuffled_indices)
 
 if __name__ == "__main__":
     main()
