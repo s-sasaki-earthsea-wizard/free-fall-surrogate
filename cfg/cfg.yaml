@@ -2,8 +2,8 @@
 gravity_acceleration: 9.81 # m/s^2
 
 # setting of parabolic dataset
-num_samples: 1000  
-num_points:  100  
+num_samples: 100  
+num_points:  50  
 
 # The range of initial velocity and angle
 initial_velocity_min: 10.0  # m/s
