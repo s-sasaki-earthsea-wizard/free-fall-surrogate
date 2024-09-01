@@ -34,12 +34,8 @@ def main():
     # Set the batch size to the number of unique path_ids
     batch_size = len(motion_concat) // len(motion_tensors)  # This should equal the number of time steps per path_id
           
-    # Create a DataLoader for training
-    data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
-
-    # Shuffle the batches manually using the custom function
-    shuffled_indices = batch_shuffle(dataset, batch_size)
-    shuffled_loader = DataLoader(dataset, batch_size=batch_size, sampler=shuffled_indices)
+    # Run the training
+    train_model(dataset, batch_size)
 
 if __name__ == "__main__":
     main()
