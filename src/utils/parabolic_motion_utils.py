@@ -1,7 +1,8 @@
 import pandas as pd
 import torch
+from typing import List, Tuple
 
-def load_training_data(motion_data_path: str, params_data_path: str):
+def load_training_data(motion_data_path: str, params_data_path: str) -> Tuple[List[torch.Tensor], List[torch.Tensor]]:
     # Load data from CSV files into pandas DataFrames
     motion_data = pd.read_csv(motion_data_path)
     params_data = pd.read_csv(params_data_path)

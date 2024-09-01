@@ -1,7 +1,8 @@
 import numpy as np
+import torch
 from utils.config_utils import load_config
 
-def verify_motion_against_params(motion, params, tolerance=1e-3):
+def verify_motion_against_params(motion: torch.Tensor, params: torch.Tensor, tolerance: float = 1e-3) -> bool:
     # Load the configuration file and gravity acceleration from it
     cfg = load_config('./cfg/cfg.yaml')
     gravity_acceleration = cfg['gravity_acceleration']

@@ -2,10 +2,12 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
+from torch.utils.data import Dataset
+
 from models.parabolic_motion_model import ParabolicMotionModel
 from utils.config_utils import load_config
 
-def train_model(dataset, batch_size):
+def train_model(dataset: Dataset, batch_size: int) -> None:
     # Load the configuration file and extract the number of epochs and learning rate
     cfg = load_config('./cfg/cfg.yaml')
     num_epochs = cfg['training']['num_epochs']
