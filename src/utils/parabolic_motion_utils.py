@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import torch
 from typing import List, Tuple
 
@@ -20,6 +21,7 @@ def load_training_data(motion_data_path: str, params_data_path: str) -> Tuple[Li
         # Convert the motion group and params to tensors
         motion_tensor = torch.tensor(group[['time', 'x', 'y']].values, dtype=torch.float32)
         params_tensor = torch.tensor(params[['initial_velocity', 'angle (deg)']].values, dtype=torch.float32)
+        params_tensor[1] = params_tensor[1] * (torch.tensor(np.pi / 180.0))  # Convert angle to radians
 
         # Append the tensors to their respective lists
         motion_tensors.append(motion_tensor)
