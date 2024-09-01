@@ -14,10 +14,10 @@ def initialize_model(input_size: int, hidden_size: int, output_size: int) -> nn.
     model = ParabolicMotionModel(input_size, hidden_size, output_size)
     return model
 
-def configure_training(cfg: dict, model: nn.Module) -> tuple:
+def configure_training(learning_rate: float, model: nn.Module) -> tuple:
     """Set up the loss function and optimizer."""
     criterion = nn.MSELoss()  # Evaluate loss by MSE.
-    optimizer = optim.Adam(model.parameters(), lr=cfg['training']['learning_rate'])  # Optimize model weights by Adam.
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)  # Optimize model weights by Adam.
     return criterion, optimizer
 
 def train_one_epoch(model: nn.Module, data_loader: DataLoader, criterion: nn.Module, optimizer: optim.Optimizer, epoch: int, num_epochs: int) -> float:
@@ -45,19 +45,19 @@ def train_one_epoch(model: nn.Module, data_loader: DataLoader, criterion: nn.Mod
 def save_model(model, file_path):
     """Save the PyTorch model to the specified file path."""
     torch.save(model.state_dict(), file_path)
-    print(f"Model saved as '{file_path}'")
 
 def train_model(dataset: Dataset, batch_size: int) -> None:
     """Main training loop."""
     # Load the configuration file and extract the number of epochs and learning rate
     cfg = load_config('./cfg/cfg.yaml')
     num_epochs = cfg['training']['num_epochs']
+    learning_rate = float(cfg['training']['learning_rate'])
     
     # Initialize the model
     model = initialize_model(input_size=2, hidden_size=64, output_size=3)
 
     # Set the loss function and optimizer
-    criterion, optimizer = configure_training(cfg, model)
+    criterion, optimizer = configure_training(learning_rate, model)
     
     # Loop for training
     for epoch in range(num_epochs):

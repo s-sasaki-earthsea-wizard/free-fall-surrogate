@@ -13,8 +13,8 @@ def verify_motion_against_params(motion: torch.Tensor, params: torch.Tensor, tol
     y_actual = motion[:, 2].numpy()
 
     # Extract initial velocity and angle from params
-    initial_velocity = params[0].item()
-    angle_deg = params[1].item()
+    initial_velocity = params[0, 0].item()
+    angle_deg = params[0, 1].item()
     angle_rad = np.radians(angle_deg)
 
     # Calculate theoretical motion

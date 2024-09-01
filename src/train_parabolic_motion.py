@@ -5,9 +5,6 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 
 from utils.parabolic_motion_utils import load_training_data
-from utils.data_utils import batch_shuffle
-from utils.validation_utils import verify_motion_against_params
-from models.parabolic_motion_model import ParabolicMotionModel
 from training.train_model import train_model
 
 def main():
