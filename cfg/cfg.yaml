@@ -2,7 +2,7 @@
 gravity_acceleration: 9.81 # m/s^2
 
 # setting of parabolic dataset
-num_samples: 1000  
+num_samples: 500  
 num_points:  100  
 
 # The range of initial velocity and angle
@@ -18,3 +18,10 @@ test_ratio: 0.1
 
 # Random state for splitting the dataset
 random_state: 42
+
+# Model trining parameters
+training:
+  epoch_max: 5000
+  learning_rate: 1e-2
+  target_loss: 1e-2
+  hidden_size: 128
