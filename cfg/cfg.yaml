@@ -21,7 +21,7 @@ random_state: 42
 
 # Model trining parameters
 training:
-  epoch_max: 5000
-  learning_rate: 1e-2
+  epoch_max: 1000
+  learning_rate: 1e-6
   target_loss: 1e-2
   hidden_size: 128

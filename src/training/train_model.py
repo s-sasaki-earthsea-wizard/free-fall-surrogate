@@ -23,19 +23,21 @@ def configure_training(learning_rate: float, model: nn.Module) -> tuple:
 def train_one_epoch(model: nn.Module, data_loader: DataLoader, criterion: nn.Module, optimizer: optim.Optimizer, epoch: int, epoch_max: int) -> float:
     """Train the model for one epoch."""
     for i, (motion, params) in enumerate(data_loader):
-        # Debug: Verify the motion against the parameters for this batch
-        # assert verify_motion_against_params(motion, params), f"Data verification failed for batch {i}"
-
-        # Debug: Print the current batch
-        # print(f"Batch [{i+1}/{len(data_loader)}], Epoch [{epoch+1}/{epoch_max}]")
-        # print(f"Motion shape: {motion.shape}, Params shape: {params.shape}")
-        # print(f"Motion: {motion}, Params: {params}")
+        # Fetch the first elements of the parameters tensor, because they are the same for all time steps
+        unique_params = params[0].unsqueeze(0)
 
         # Fetch the model outputs
-        outputs = model(params)
+        outputs = model(unique_params)
+
+        # Calculate the target values, i.e. the reaching distance and max height
+        target_reaching_distance = motion[-1, 1]
+        target_max_height = motion[:, 2].max()
+
+        # Create target tensor
+        target = torch.tensor([target_reaching_distance, target_max_height]).unsqueeze(0)
 
         # Calculate the loss
-        loss = criterion(outputs, motion)
+        loss = criterion(outputs, target)
 
         # Reset gradients
         optimizer.zero_grad()
@@ -61,7 +63,9 @@ def train_model(dataset: Dataset, batch_size: int) -> None:
     hidden_size = int(cfg['training']['hidden_size'])
     
     # Initialize the model
-    model = initialize_model(input_size=2, hidden_size=hidden_size, output_size=3)
+    model = initialize_model(input_size=2,
+                             hidden_size=hidden_size,
+                             output_size=2)
 
     # Set the loss function and optimizer
     criterion, optimizer = configure_training(learning_rate, model)
