@@ -9,26 +9,55 @@ from utils.config_utils import load_config
 from utils.validation_utils import verify_motion_against_params
 from utils.data_utils import batch_shuffle
 
+def initialize_model(input_size: int, hidden_size: int, output_size: int) -> nn.Module:
+    """Initialize the ParabolicMotionModel with the given sizes."""
+    model = ParabolicMotionModel(input_size, hidden_size, output_size)
+    return model
+
+def configure_training(cfg: dict, model: nn.Module) -> tuple:
+    """Set up the loss function and optimizer."""
+    criterion = nn.MSELoss()  # Evaluate loss by MSE.
+    optimizer = optim.Adam(model.parameters(), lr=cfg['training']['learning_rate'])  # Optimize model weights by Adam.
+    return criterion, optimizer
+
+def train_one_epoch(model: nn.Module, data_loader: DataLoader, criterion: nn.Module, optimizer: optim.Optimizer, epoch: int, num_epochs: int) -> float:
+    """Train the model for one epoch."""
+    for i, (motion, params) in enumerate(data_loader):
+        # Debug: Verify the motion against the parameters for this batch
+        assert verify_motion_against_params(motion, params), f"Data verification failed for batch {i}"
+
+        # Fetch the model outputs
+        outputs = model(params)
+
+        # Calculate the loss
+        loss = criterion(outputs, motion)
+
+        # Reset gradients
+        optimizer.zero_grad()
+
+        # Backpropagate the loss and optimize the weights
+        loss.backward()
+        optimizer.step()
+
+    print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
+    return loss.item()
+
 def save_model(model, file_path):
     """Save the PyTorch model to the specified file path."""
     torch.save(model.state_dict(), file_path)
     print(f"Model saved as '{file_path}'")
 
 def train_model(dataset: Dataset, batch_size: int) -> None:
+    """Main training loop."""
     # Load the configuration file and extract the number of epochs and learning rate
     cfg = load_config('./cfg/cfg.yaml')
     num_epochs = cfg['training']['num_epochs']
-    learning_rate = cfg['training']['learning_rate']
-
-    # initialize the model
-    input_size = 2  # (initial velocity, angle)
-    hidden_size = 64
-    output_size = 3  # (time, x, y)
-    model = ParabolicMotionModel(input_size, hidden_size, output_size)
+    
+    # Initialize the model
+    model = initialize_model(input_size=2, hidden_size=64, output_size=3)
 
     # Set the loss function and optimizer
-    criterion = nn.MSELoss() # Evaluate loss by MSE.
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate) # Optimize model weights by Adam
+    criterion, optimizer = configure_training(cfg, model)
     
     # Loop for training
     for epoch in range(num_epochs):
@@ -36,25 +65,9 @@ def train_model(dataset: Dataset, batch_size: int) -> None:
         shuffled_indices = batch_shuffle(dataset, batch_size)
         data_loader = DataLoader(dataset, batch_size=batch_size, sampler=shuffled_indices)
         
-        for i, (motion, params) in enumerate(data_loader):
-            # Debug: Verify the motion against the parameters for this batch
-            assert verify_motion_against_params(motion, params), f"Data verification failed for batch {i}"
-
-            # Fetch the model outputs
-            outputs = model(params)
-
-            # Calculate the loss
-            loss = criterion(outputs, motion)
-
-            # Reset gradients
-            optimizer.zero_grad()
-
-            # Backpropagate the loss and optimize the weights
-            loss.backward()
-            optimizer.step()
-
-        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
+        # Train for one epoch
+        train_one_epoch(model, data_loader, criterion, optimizer, epoch, num_epochs)
 
     # Save the trained model
-    save_model(model, 'parabolic_motion_model.pth')
+    save_model(model, './trained_models/parabolic_motion_model.pth')
     print("Training complete!")
