@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import torch.optim.lr_scheduler
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 
@@ -83,7 +84,8 @@ def train_model(train_dataset: Dataset, val_dataset: Dataset, batch_size: int) -
     # Load the configuration file and extract the number of epochs and learning rate
     cfg = load_config('./cfg/cfg.yaml')
     epoch_max = cfg['training']['epoch_max']
-    learning_rate = float(cfg['training']['learning_rate'])
+    init_learning_rate = float(cfg['training']['init_learning_rate'])
+    sheduler_cycle_epochs = cfg['training']['sheduler_cycle_epochs']
     target_loss = float(cfg['training']['target_loss'])
     hidden_size = int(cfg['training']['hidden_size'])
     
@@ -93,7 +95,10 @@ def train_model(train_dataset: Dataset, val_dataset: Dataset, batch_size: int) -
                              output_size=2)
 
     # Set the loss function and optimizer
-    criterion, optimizer = configure_training(learning_rate, model)
+    criterion, optimizer = configure_training(init_learning_rate, model)
+
+    # Set up the CosineAnnealingLR scheduler
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=sheduler_cycle_epochs)
     
     # Loop for training
     for epoch in range(epoch_max):
@@ -108,19 +113,8 @@ def train_model(train_dataset: Dataset, val_dataset: Dataset, batch_size: int) -
         val_loss = validate_model(model, data_loader, criterion)
         print(f'Epoch [{epoch+1}/{epoch_max}], Validation Loss: {val_loss:.4f}')
 
-        # Check if the validation loss is less than a certain threshold, and then adjust the learning rate
-        if val_loss < 0.5 and val_loss > 0.1 and learning_rate >= float(cfg['training']['learning_rate']):
-            learning_rate = float(cfg['training']['learning_rate'])/10
-            criterion, optimizer = configure_training(learning_rate, model)
-            print(f"Learning rate adjusted to {learning_rate}")
-        if val_loss < 0.1 and val_loss > 0.05 and learning_rate >= float(cfg['training']['learning_rate'])/10:
-            learning_rate = float(cfg['training']['learning_rate'])/50
-            criterion, optimizer = configure_training(learning_rate, model)
-            print(f"Learning rate adjusted to {learning_rate}")
-        if val_loss < 0.05 and learning_rate >= float(cfg['training']['learning_rate'])/100:
-            learning_rate = float(cfg['training']['learning_rate'])/100
-            criterion, optimizer = configure_training(learning_rate, model)
-            print(f"Learning rate adjusted to {learning_rate}")
+        # Update the learning rate using the scheduler
+        scheduler.step()
 
         # Check if the loss has been reached less than the target loss
         if val_loss < target_loss:
