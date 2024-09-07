@@ -16,9 +16,13 @@
 # pycache
 __pycache__/
 
+# pytest cache
+.pytest_cache/
+
 # trained models
 *.pth
 
 # generate summary Python script
 generate_project_summary.py
 *_project_summary.txt
+.summaryignore
