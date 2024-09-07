@@ -108,6 +108,20 @@ def train_model(train_dataset: Dataset, val_dataset: Dataset, batch_size: int) -
         val_loss = validate_model(model, data_loader, criterion)
         print(f'Epoch [{epoch+1}/{epoch_max}], Validation Loss: {val_loss:.4f}')
 
+        # Check if the validation loss is less than a certain threshold, and then adjust the learning rate
+        if val_loss < 0.5 and val_loss > 0.1 and learning_rate >= float(cfg['training']['learning_rate']):
+            learning_rate = float(cfg['training']['learning_rate'])/10
+            criterion, optimizer = configure_training(learning_rate, model)
+            print(f"Learning rate adjusted to {learning_rate}")
+        if val_loss < 0.1 and val_loss > 0.05 and learning_rate >= float(cfg['training']['learning_rate'])/10:
+            learning_rate = float(cfg['training']['learning_rate'])/50
+            criterion, optimizer = configure_training(learning_rate, model)
+            print(f"Learning rate adjusted to {learning_rate}")
+        if val_loss < 0.05 and learning_rate >= float(cfg['training']['learning_rate'])/100:
+            learning_rate = float(cfg['training']['learning_rate'])/100
+            criterion, optimizer = configure_training(learning_rate, model)
+            print(f"Learning rate adjusted to {learning_rate}")
+
         # Check if the loss has been reached less than the target loss
         if val_loss < target_loss:
             print(f"Target validation loss reached: {val_loss:.4f} < {target_loss:.4f} = target loss")

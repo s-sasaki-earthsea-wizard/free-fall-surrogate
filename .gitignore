@@ -18,3 +18,7 @@ __pycache__/
 
 # trained models
 *.pth
+
+# generate summary Python script
+generate_project_summary.py
+*_project_summary.txt

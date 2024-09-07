@@ -10,6 +10,10 @@ split:
 train:
 	python src/train_parabolic_motion.py
 
+# Generate project summary
+summary:
+	python generate_project_summary.py	
+
 # -------------------
 # Docker
 # -------------------
