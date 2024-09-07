@@ -7,7 +7,6 @@ from torch.utils.data import DataLoader, TensorDataset
 from utils.parabolic_motion_utils import load_training_data
 from training.train_model import train_model
 
-
 def main():
     # CSV file paths
     train_motion_data_path = './data/simulation/splits/train_motion_data.csv'
