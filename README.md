@@ -46,13 +46,13 @@ make split
 
 にそれぞれ保存されます。
 
-学習の実行
+学習の実行：
 ```
 make train
 ```
-TBD.
+学習が完了すると、モデルの重みが `./trained_models/` ディレクトリに `*.pth` ファイルとして保存されます。このファイルは、後でモデルをロードして推論に使用するためのものです。
 
-重力加速度や生成する軌道の数、train, test, valの比率、学習率などのトレーニングのパラメータは以下のファイルを編集することで変更できます。
+重力加速度や生成する軌道の数、train, test, valの比率、学習率などのトレーニングに関するパラメータは以下のファイルを編集することで変更できます。
 ```
 cfg/cfg.yaml
 ```
@@ -69,6 +69,11 @@ make test_parabolic_motion_generation
 ```
 make test_parabolic_motion_split
 ```
+
+## プロジェクトのサマリー生成スクリプト
+このプロジェクトでは、[Olemi-llm-apprenticeさん](https://github.com/Olemi-llm-apprentice)によって提供されている、プロジェクトのサマリーを生成するスクリプトを使用しています。このスクリプトはMITライセンスの下で提供されており、開発のワークフローに組み込んでいます。
+
+ただし、このスクリプトは `.gitignore` によってバージョン管理から除外されており、リポジトリには含まれていません。スクリプトの元のソースコードやドキュメントについては[こちら](https://github.com/Olemi-llm-apprentice/generate-project-summary)をご覧ください。
 
 ## その他
 特になし
@@ -124,11 +129,11 @@ The split data is saved in the following locations:
 - Test data: `./data/simulation/splits/test_motion_data.csv`, `./data/simulation/splits/test_params_data.csv`
 - Validation data: `./data/simulation/splits/val_motion_data.csv`, `./data/simulation/splits/val_params_data.csv`
 
-Run training:
+To run the training process, use the following command:
 ```
 make train
 ```
-TBD.
+After the training is complete, the model weights will be saved as a `*.pth` file in the `./trained_models/` directory. This file can be used later to load the model and perform inference.
 
 You can modify parameters such as gravitational acceleration, the number of generated trajectories, the ratios for train, test, and validation sets, and parameters for training by editing the following file:
 ```
@@ -147,6 +152,13 @@ Test the splitting of parabolic motion data:
 ```
 make test_parabolic_motion_split
 ```
+
+## Project Summary Script
+This project utilizes a script for generating project summaries, which is provided by [Olemi-llm-apprentice](https://github.com/Olemi-llm-apprentice).
+The script is licensed under the MIT License, and we have included it as part of our development workflow.
+
+However, this script is excluded from version control via `.gitignore` and is not included in the repository.
+You can access the original source and documentation for the script [here](https://github.com/Olemi-llm-apprentice/generate-project-summary).
 
 ## Others
 Nothing in particular.
