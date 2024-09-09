@@ -19,6 +19,9 @@ __pycache__/
 # pytest cache
 .pytest_cache/
 
+# Plots
+/plots/actual_vs_predicted_path/*.png
+
 # trained models
 *.pth
 

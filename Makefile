@@ -10,6 +10,12 @@ split:
 train:
 	python src/train_parabolic_motion.py
 
+# Evaluate prediction model
+evaluate:
+	python src/evaluate_model_inference.py
+evaluation_plots:
+	python src/plot_actual_vs_predicted_path.py
+
 # Generate project summary
 summary:
 	python generate_project_summary.py	
