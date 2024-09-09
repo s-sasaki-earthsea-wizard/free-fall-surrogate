@@ -1,10 +1,13 @@
 # Free-fall-surrogate
 
 ## 概要
-自由落下運動をサロゲートモデルで再現することを試みます。
-- サロゲートモデルは、通常は数値解析やシミュレーションでしか解けないような複雑な物理現象を、機械学習モデルを使って簡単かつ高速に再現する手法です。
-- このプロジェクトでは、サロゲートモデルを用いて自由落下運動を予測し、物理ベースのシミュレーションを効率化することを目指しています。
-- 初速度と発射角度という2つのパラメータから自由落下の軌道を計算し、その精度や応用可能性を評価します。
+このプロジェクトでは、サロゲートモデルを用いて自由落下運動を再現します。
+
+- サロゲートモデルは、通常は数値解析やシミュレーションを要する複雑な物理現象を、機械学習で簡単かつ高速に再現する手法です。
+- 初速度と発射角度の2つのパラメータを基に、自由落下の軌道を予測し、物理ベースのシミュレーションの効率化を目指します。
+- 二次関数を使った理論上の放物線と、本プロジェクトのモデルによる推論結果を重ねたプロットを以下に示します。
+
+![](./assets/plot_path_0.png "Sample inference")
 
 ## 開発環境
 - ホストOS: Ubuntu 18.04 (Jetson Nano)
@@ -52,6 +55,18 @@ make train
 ```
 学習が完了すると、モデルの重みが `./trained_models/` ディレクトリに `*.pth` ファイルとして保存されます。このファイルは、後でモデルをロードして推論に使用するためのものです。
 
+MSEによるモデルの評価: 
+```
+make evaluate
+```
+テストデータと推論結果のMSEを出力します。
+
+プロットの生成:
+```
+make evaluation_plots
+```
+実際の放物運動の軌道とモデルの推論結果を重ねたプロットを生成し、`./plots/actual_vs_predicted_path/`にランダムに選ばれた5つのプロットを`png`ファイルとして保存します
+
 重力加速度や生成する軌道の数、train, test, valの比率、学習率などのトレーニングに関するパラメータは以下のファイルを編集することで変更できます。
 ```
 cfg/cfg.yaml
@@ -84,9 +99,12 @@ _____
 
 ## Overview
 This project aims to replicate free fall motion using a surrogate model.
-- A surrogate model is a method that uses machine learning to replicate complex physical phenomena, which would typically require numerical analysis or simulations, in a simpler and faster manner.
-- In this project, the goal is to predict free fall motion using a surrogate model, thereby improving the efficiency of physics-based simulations.
-- The model calculates the trajectory of free fall based on two parameters: initial velocity and launch angle. The accuracy and applicability of the model are then evaluated.
+
+- A surrogate model is a method that uses machine learning to replicate complex physical phenomena, which would typically require numerical analysis or simulation, in a simpler and faster manner.
+- Based on two parameters, initial velocity and launch angle, the model predicts the trajectory of free fall, aiming to improve the efficiency of physics-based simulations.
+- Below is a plot comparing the theoretical parabolic curve, derived from a quadratic function, with the predictions made by the model developed in this project.
+
+![](./assets/plot_path_0.png "Sample inference")
 
 ## Development Environment
 - Host OS: Ubuntu 18.04 (Jetson Nano)
@@ -134,6 +152,19 @@ To run the training process, use the following command:
 make train
 ```
 After the training is complete, the model weights will be saved as a `*.pth` file in the `./trained_models/` directory. This file can be used later to load the model and perform inference.
+
+**Evaluate with MSE**:
+```
+make evaluate
+```
+Outputs the Mean Squared Error (MSE) between the test data and the model's predictions.
+
+**Generate Plots**:
+ ```
+make evaluation_plots
+```
+Generates plots comparing the actual parabolic trajectory with the model's predictions. The plots are saved as `png` files in `./plots/actual_vs_predicted_path/`, with 5 randomly selected samples.
+
 
 You can modify parameters such as gravitational acceleration, the number of generated trajectories, the ratios for train, test, and validation sets, and parameters for training by editing the following file:
 ```

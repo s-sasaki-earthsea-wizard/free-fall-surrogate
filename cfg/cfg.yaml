@@ -26,3 +26,9 @@ training:
   sheduler_cycle_epochs: 500
   target_loss: 1e-2
   hidden_size: 64
+
+# Evaluation
+evaluation:
+  model_path: './trained_models/parabolic_motion_model.pth'
+  test_motion_data: './data/simulation/splits/test_motion_data.csv'
+  test_params_data: './data/simulation/splits/test_params_data.csv'
