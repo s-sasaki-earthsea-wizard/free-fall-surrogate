@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 
+from utils.parabolic_motion_utils import append_intermediate_height
+
 def train_one_epoch(model: nn.Module, data_loader: DataLoader, criterion: nn.Module, optimizer: optim.Optimizer, epoch: int, epoch_max: int) -> float:
     """Train the model for one epoch."""
     for i, (motion, params) in enumerate(data_loader):
@@ -19,6 +21,10 @@ def train_one_epoch(model: nn.Module, data_loader: DataLoader, criterion: nn.Mod
         # Create target tensor
         target = torch.tensor([target_reaching_distance, target_max_height]).unsqueeze(0)
 
+        # Append intermediate points to the target tensor
+        target = append_intermediate_height(motion, target, target_reaching_distance)
+
+        # --- Model Training ---
         # Calculate the loss
         loss = criterion(outputs, target)
 

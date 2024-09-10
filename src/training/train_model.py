@@ -1,6 +1,4 @@
 import torch
-# import torch.nn as nn
-# import torch.optim as optim
 import torch.optim.lr_scheduler
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
@@ -26,7 +24,7 @@ def train_model(train_dataset: Dataset, val_dataset: Dataset, batch_size: int) -
     # Initialize the model
     model = ParabolicMotionModel(input_size=2,
                                  hidden_size=hidden_size,
-                                 output_size=2)
+                                 output_size=4)
 
     # Set the loss function and optimizer
     criterion, optimizer = configure_training(init_learning_rate, model)

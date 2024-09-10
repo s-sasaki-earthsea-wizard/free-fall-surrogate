@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import torch
+from torch import tensor, cat
 from typing import List, Tuple
 
 def load_training_data(motion_data_path: str, params_data_path: str) -> Tuple[List[torch.Tensor], List[torch.Tensor]]:
@@ -28,3 +29,25 @@ def load_training_data(motion_data_path: str, params_data_path: str) -> Tuple[Li
         params_tensors.append(params_tensor)
 
     return motion_tensors, params_tensors
+
+def find_nearest_point(motion, target_x_value):
+    """Find the index of the point in 'motion' closest to 'target_x_value'."""
+    abs_diff = torch.abs(motion[:, 1] - target_x_value)
+    nearest_index = torch.argmin(abs_diff).item()
+    return nearest_index
+
+def append_intermediate_height(motion, target, reaching_distance):
+    """Find the height-values at x = max(x)/4 and 3*max(x)/4 and append them to the target tensor."""
+
+    # Find the indices of the points closest to max(x)/4 and 3*max(x)/4
+    index_1_4 = find_nearest_point(motion, reaching_distance / 4)
+    index_3_4 = find_nearest_point(motion, 3 * reaching_distance / 4)
+
+    # Get the corresponding y-values for these points
+    target_height_1_4 = motion[index_1_4, 2]
+    target_height_3_4 = motion[index_3_4, 2]
+
+    # Append these to the target tensor
+    updated_target = cat([target, tensor([[target_height_1_4, target_height_3_4]])], dim=1)
+
+    return updated_target

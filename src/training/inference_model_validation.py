@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
+from utils.parabolic_motion_utils import append_intermediate_height
+
 def validate_model(model: nn.Module, val_loader: DataLoader, criterion: nn.Module) -> float:
     """Validate the model using the validation dataset."""
     model.eval()  # Set the model to evaluation mode
@@ -21,6 +23,9 @@ def validate_model(model: nn.Module, val_loader: DataLoader, criterion: nn.Modul
 
             # Create target tensor
             target = torch.tensor([target_reaching_distance, target_max_height]).unsqueeze(0)
+
+            # Append intermediate points to the target tensor
+            target = append_intermediate_height(motion, target, target_reaching_distance)
 
             # Calculate the loss
             loss = criterion(outputs, target)
