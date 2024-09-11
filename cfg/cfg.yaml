@@ -23,7 +23,7 @@ random_state: 42
 training:
   epoch_max: 100000
   init_learning_rate: 1e-3
-  sheduler_cycle_epochs: 500
+  sheduler_cycle_epochs: 1000
   target_loss: 1e-2
   hidden_size: 64
 

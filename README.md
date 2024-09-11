@@ -7,7 +7,7 @@
 - 初速度と発射角度の2つのパラメータを基に、自由落下の軌道を予測し、物理ベースのシミュレーションの効率化を目指します。
 - 二次関数を使った理論上の放物線と、本プロジェクトのモデルによる推論結果を重ねたプロットを以下に示します。
 
-![](./assets/plot_path_0.png "Sample inference")
+![](./assets/plot_path_11.png "Sample inference")
 
 ## 開発環境
 - ホストOS: Ubuntu 18.04 (Jetson Nano)
@@ -104,7 +104,7 @@ This project aims to replicate free fall motion using a surrogate model.
 - Based on two parameters, initial velocity and launch angle, the model predicts the trajectory of free fall, aiming to improve the efficiency of physics-based simulations.
 - Below is a plot comparing the theoretical parabolic curve, derived from a quadratic function, with the predictions made by the model developed in this project.
 
-![](./assets/plot_path_0.png "Sample inference")
+![](./assets/plot_path_11.png "Sample inference")
 
 ## Development Environment
 - Host OS: Ubuntu 18.04 (Jetson Nano)

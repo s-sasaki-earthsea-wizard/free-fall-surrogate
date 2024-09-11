@@ -1,10 +1,11 @@
 import torch
 import pandas as pd
+import numpy as np
 from sklearn.metrics import mean_squared_error
 
 from model_definitions.parabolic_motion_model import ParabolicMotionModel
 from utils.config_utils import load_config
-from utils.parabolic_motion_utils import load_training_data
+from utils.parabolic_motion_utils import load_training_data, append_intermediate_height
 
 def load_model(model_path, input_size, hidden_size, output_size):
     """Load the trained model from the specified path."""
@@ -28,12 +29,19 @@ def evaluate_model(model, motion_tensors, params_tensors):
         # Extract the true reaching distance and max height
         true_reaching_distance = motion[-1, 1]
         true_max_height = motion[:, 2].max()
+
+        # Create target tensor
         target = torch.tensor([true_reaching_distance, true_max_height]).unsqueeze(0)
+        target = append_intermediate_height(motion, target, true_reaching_distance)
         targets.append(target.numpy())
 
+    # Convert the torch tensors to numpy arrays
+    predictions_arr = np.array(predictions)
+    targets_arr = np.array(targets)
+
     # Compute Mean Squared Error (MSE) between predictions and targets
-    predictions = torch.tensor(predictions).squeeze().numpy()
-    targets = torch.tensor(targets).squeeze().numpy()
+    predictions = torch.tensor(predictions_arr).squeeze()
+    targets = torch.tensor(targets_arr).squeeze()
     mse = mean_squared_error(targets, predictions)
     
     return mse
@@ -47,7 +55,7 @@ def main():
     model_path = cfg['evaluation']['model_path']
     input_size = 2  # initial_velocity, angle
     hidden_size = cfg['training']['hidden_size']
-    output_size = 2  # reaching distance, max height
+    output_size = 4  # reaching distance, max height, and two intermediate points
     model = load_model(model_path, input_size, hidden_size, output_size)
 
     # Load the test data
