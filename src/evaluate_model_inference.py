@@ -1,5 +1,6 @@
 import torch
 import pandas as pd
+import numpy as np
 from sklearn.metrics import mean_squared_error
 
 from model_definitions.parabolic_motion_model import ParabolicMotionModel
@@ -34,9 +35,13 @@ def evaluate_model(model, motion_tensors, params_tensors):
         target = append_intermediate_height(motion, target, true_reaching_distance)
         targets.append(target.numpy())
 
+    # Convert the torch tensors to numpy arrays
+    predictions_arr = np.array(predictions)
+    targets_arr = np.array(targets)
+
     # Compute Mean Squared Error (MSE) between predictions and targets
-    predictions = torch.tensor(predictions).squeeze().numpy()
-    targets = torch.tensor(targets).squeeze().numpy()
+    predictions = torch.tensor(predictions_arr).squeeze()
+    targets = torch.tensor(targets_arr).squeeze()
     mse = mean_squared_error(targets, predictions)
     
     return mse
